@@ -95,6 +95,11 @@ func CreateCluster(c *cli.Context) error {
 	env = append(env, c.StringSlice("env")...)
 	env = append(env, fmt.Sprintf("K3S_CLUSTER_SECRET=%s", GenerateRandomString(20)))
 
+	fmt.Println("JH: env proxy settings")
+	for _, key := range []string{"HTTP_PROXY", "HTTPS_PROXY", "NO_PROXY", "http_proxy", "https_proxy", "no_proxy"} {
+		env = append(env, fmt.Sprintf("%s=%s", key, os.Getenv(key)))
+	}
+
 	// k3s server arguments
 	// TODO: --port will soon be --api-port since we want to re-use --port for arbitrary port mappings
 	if c.IsSet("port") {
@@ -281,10 +286,13 @@ func DeleteCluster(c *cli.Context) error {
 			log.Warningf("Couldn't delete cluster network for cluster %s\n%+v", cluster.name, err)
 		}
 
-		log.Println("...Removing docker image volume")
-		if err := deleteImageVolume(cluster.name); err != nil {
-			log.Warningf("Couldn't delete image docker volume for cluster %s\n%+v", cluster.name, err)
-		}
+		fmt.Println("JH: keep image volume")
+		/*
+			log.Println("...Removing docker image volume")
+			if err := deleteImageVolume(cluster.name); err != nil {
+				log.Warningf("Couldn't delete image docker volume for cluster %s\n%+v", cluster.name, err)
+			}
+		*/
 
 		log.Infof("Removed cluster [%s]", cluster.name)
 	}

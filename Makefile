@@ -11,7 +11,7 @@ GIT_TAG   := $(shell git describe --always)
 endif
 
 # get latest k3s version
-K3S_TAG		:= $(shell curl --silent "https://api.github.com/repos/rancher/k3s/releases/latest" | grep '"tag_name":' | sed -E 's/.*"([^"]+)".*/\1/')
+K3S_TAG		:= v1.3.4
 ifeq ($(K3S_TAG),)
 $(warning K3S_TAG undefined: couldn't get latest k3s image tag!)
 $(warning Output of curl: $(shell curl --silent "https://api.github.com/repos/rancher/k3s/releases/latest"))
@@ -19,7 +19,7 @@ $(error exiting)
 endif
 
 # Go options
-GO        ?= go
+GO        ?= go1.12.13
 PKG       := $(shell go mod vendor)
 TAGS      :=
 TESTS     := .
